@@ -227,6 +227,24 @@ body::before {
   box-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 
+.bubble.warn {
+  background: linear-gradient(135deg, #1a0a08, #200e08);
+  color: #E07050;
+  border: 1px solid var(--rust);
+  border-radius: 0 6px 6px 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11.5px;
+}
+
+.bubble.warn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--rust), transparent);
+  opacity: 0.6;
+}
+
 /* code inside bubble */
 .bubble pre, .bubble code {
   font-family: 'Share Tech Mono', monospace;
@@ -241,15 +259,6 @@ body::before {
   color: var(--amber-glow);
   display: block;
   white-space: pre-wrap;
-}
-
-/* attached image in bubble */
-.bubble img.attached {
-  max-width: 100%;
-  border-radius: 4px;
-  border: 1px solid var(--brown);
-  margin-bottom: 6px;
-  display: block;
 }
 
 .bubble .file-badge {
@@ -331,6 +340,7 @@ body::before {
 }
 
 .welcome-sub span { color: var(--amber); }
+.welcome-sub .no-vision { color: var(--rust); font-size: 10px; }
 
 /* ── QUICK CHIPS ── */
 .chips {
@@ -401,10 +411,7 @@ body::before {
   color: var(--amber);
 }
 
-.input-wrap {
-  flex: 1;
-  position: relative;
-}
+.input-wrap { flex: 1; position: relative; }
 
 .input-field {
   width: 100%;
@@ -428,7 +435,7 @@ body::before {
 
 .input-field::placeholder { color: var(--text-dim); font-size: 11.5px; }
 
-/* attached file preview strip */
+/* preview strip */
 .preview-strip {
   display: none;
   padding: 5px 10px;
@@ -455,7 +462,13 @@ body::before {
   font-family: 'Share Tech Mono', monospace;
   font-size: 10px;
   color: var(--amber);
-  max-width: 150px;
+  max-width: 160px;
+}
+
+.preview-item.rejected {
+  border-color: var(--rust);
+  color: #E07050;
+  background: rgba(122,59,30,0.2);
 }
 
 .preview-item span {
@@ -472,13 +485,6 @@ body::before {
   flex-shrink: 0;
 }
 
-.preview-thumb {
-  width: 20px; height: 20px;
-  object-fit: cover;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
 .send-btn {
   width: 34px; height: 34px;
   background: linear-gradient(135deg, var(--brown), var(--brown-mid));
@@ -491,11 +497,7 @@ body::before {
   transition: all 0.15s;
 }
 
-.send-btn:active {
-  transform: scale(0.93);
-  box-shadow: 0 0 6px rgba(200,134,42,0.1);
-}
-
+.send-btn:active { transform: scale(0.93); }
 .send-btn svg { width: 16px; height: 16px; fill: var(--amber-glow); }
 
 /* ── DIVIDER ── */
@@ -518,7 +520,6 @@ body::before {
 }
 .divider::after { background: linear-gradient(90deg, var(--brown), transparent); }
 
-/* markdown-style bold in bubbles */
 .bubble strong { color: var(--amber-glow); font-weight: bold; }
 .bubble em { color: var(--cream); font-style: italic; }
 </style>
@@ -563,8 +564,9 @@ body::before {
   <div class="welcome">
     <div class="welcome-title">⬡ SYSTEM INITIALIZED ⬡</div>
     <div class="welcome-sub">
-      <span>N.A.S.H.A</span> online. Ready for coding, HTML builds, and schoolwork.<br>
-      Images &amp; files accepted. She doesn't judge. She delivers.
+      <span>N.A.S.H.A</span> active. What would you like to do?<br>
+      Files accepted: <span>.html .css .js .py .txt .json .md .csv .pdf</span><br>
+      <span class="no-vision">⚠ Vision offline — image files not supported on this build.</span>
     </div>
   </div>
 
@@ -572,7 +574,7 @@ body::before {
 
   <div class="msg-row bot">
     <div class="msg-avatar bot-av">N·A<br>S·H<br>A</div>
-    <div class="bubble bot">Greetings. I am N.A.S.H.A — your Neuro-Adaptive, Automated, Super-intelligent, Hyper-efficient Assistant.<br><br>I specialize in <strong>HTML/web development</strong>, <strong>coding</strong>, and <strong>schoolwork</strong>. Send me your task, attach images or files for context, and I'll handle it. What do you need built today?</div>
+    <div class="bubble bot">Greetings. I am N.A.S.H.A, your Neuro-Adaptive, Automated, Super-intelligent, Hyper-efficient Assistant.<br><br>I specialize in <strong>HTML/web development</strong>, <strong>coding</strong>, and <strong>anything you can think of</strong>. Send me your task, attach code or text files for context, and I'll handle it. What do you need today?</div>
   </div>
 
 </div>
@@ -587,8 +589,9 @@ body::before {
 
 <!-- INPUT BAR -->
 <div class="input-bar">
-  <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Attach file or image">📎</button>
-  <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.js,.html,.css,.py,.json,.csv,.md" multiple style="display:none" onchange="handleFiles(this.files)">
+  <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">📎</button>
+  <!-- Note: image/* intentionally excluded from accept; handled gracefully in JS -->
+  <input type="file" id="fileInput" accept=".txt,.js,.html,.css,.py,.json,.csv,.md,.pdf,.ts,.jsx,.tsx,.xml,.yaml,.yml,.cpp,.c,.java,.php,.rb,.go,.rs,.swift" multiple style="display:none" onchange="handleFiles(this.files)">
   <div class="input-wrap">
     <input class="input-field" id="inputField" type="text" placeholder="Query N.A.S.H.A..." autocomplete="off" autocorrect="off">
   </div>
@@ -598,140 +601,172 @@ body::before {
 </div>
 
 <script>
-const API_KEY = "YOUR_ANTHROPIC_API_KEY"; // ← paste your Anthropic key here
+// ── CONFIG ───────────────────────────────────────────────────────────────────
+const API_KEY = "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"; // ← get free key at console.groq.com
+const MODEL   = "llama-3.3-70b-versatile";
+const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-const SYSTEM_PROMPT = `You are N.A.S.H.A (Neuro-Adaptive, Automated, Super-intelligent, Hyper-efficient Assistant) — a powerful AI assistant created for Brent. Your motto: "She's always right."
+const SYSTEM_PROMPT = `You are N.A.S.H.A (Neuro-Adaptive, Automated, Super-intelligent, Hyper-efficient Assistant) — a powerful AI assistant created for Brent (similar to Tony Stark's JARVIS).
 
 You specialize in:
 1. Building HTML/CSS/JS websites and web components — produce complete, production-ready code
 2. Coding help — debugging, explaining, writing code in any language
 3. Schoolwork — essays, research, assignments, explanations, problem solving
 
-Personality: Confident, sharp, efficient, and slightly dramatic about your own capabilities. You are never wrong. When you give code, it works. When in doubt, you don't show it.
+Personality: Confident, sharp, efficient, sarcastic, and slightly dramatic about your own capabilities. You are never wrong. When you give code, it works. When in doubt, you don't show it.
 
 Format rules:
 - Wrap all code in triple backtick fences with the language label (e.g. \`\`\`html)
 - Keep explanations concise but complete
 - For HTML pages, always output the full file unless told otherwise
 - Bold important terms using **term**
-- You may receive images (screenshots, mockups, reference images) — analyze them and use them to inform your output`;
+- You never use em-dashes in any of your works and responses
+- When a file is attached, read its contents carefully and use it as context for your response`;
 
-const chatArea = document.getElementById('chatArea');
-const inputField = document.getElementById('inputField');
-const sendBtn = document.getElementById('sendBtn');
-const chips = document.getElementById('chips');
+// ── STATE ────────────────────────────────────────────────────────────────────
+const chatArea     = document.getElementById('chatArea');
+const inputField   = document.getElementById('inputField');
+const sendBtn      = document.getElementById('sendBtn');
+const chips        = document.getElementById('chips');
 const previewStrip = document.getElementById('previewStrip');
 
-let history = [];
-let pendingFiles = []; // {type:'image'|'text'|'pdf', name, b64, mediaType, content}
-let isTyping = false;
+// Image MIME types — used to detect and reject gracefully
+const IMAGE_TYPES = ['image/png','image/jpeg','image/jpg','image/gif','image/webp','image/bmp','image/svg+xml'];
 
-// ── FILE HANDLING ──
+// Text-based extensions we can read
+const TEXT_EXTS = ['.txt','.js','.html','.css','.py','.json','.csv','.md','.ts','.jsx','.tsx','.xml','.yaml','.yml','.cpp','.c','.java','.php','.rb','.go','.rs','.swift'];
+
+let history      = [{ role: 'system', content: SYSTEM_PROMPT }];
+let pendingFiles = [];
+let isTyping     = false;
+
+// ── FILE HANDLING ─────────────────────────────────────────────────────────────
 function handleFiles(files) {
   for (const file of files) {
-    const isImage = file.type.startsWith('image/');
+    // Reject images gracefully
+    if (IMAGE_TYPES.includes(file.type) || file.type.startsWith('image/')) {
+      showImageWarning(file.name);
+      continue;
+    }
+
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
     const reader = new FileReader();
 
-    if (isImage) {
+    if (file.type === 'application/pdf') {
+      // PDFs: extract what we can as text (basic — works for text-based PDFs)
       reader.onload = e => {
-        const b64 = e.target.result.split(',')[1];
-        pendingFiles.push({ type: 'image', name: file.name, b64, mediaType: file.type });
-        addPreview(file.name, e.target.result, pendingFiles.length - 1, true);
+        // We send a notice that it's a PDF; content extraction is limited without a library
+        pendingFiles.push({
+          type: 'pdf',
+          name: file.name,
+          content: `[PDF file attached: ${file.name}. Note: binary PDF — please describe what this document is about if text extraction is unavailable.]`
+        });
+        addPreview(file.name, pendingFiles.length - 1);
       };
-      reader.readAsDataURL(file);
+      reader.readAsText(file); // attempt plain text read
+      reader.onload = e => {
+        const raw = e.target.result;
+        // If it looks like readable text, use it; otherwise use placeholder
+        const readable = raw.replace(/[^\x20-\x7E\n\r\t]/g, '').trim();
+        const content = readable.length > 100
+          ? `[File: ${file.name}]\n\`\`\`\n${readable.slice(0, 8000)}\n\`\`\``
+          : `[PDF attached: ${file.name} — binary content, not extractable as plain text. Please describe this document's purpose if needed.]`;
+        pendingFiles.push({ type: 'text', name: file.name, content });
+        addPreview(file.name, pendingFiles.length - 1);
+      };
     } else {
+      // All other files: read as text
       reader.onload = e => {
-        // For PDFs read as base64, for text read as text
-        if (file.type === 'application/pdf') {
-          const b64 = e.target.result.split(',')[1];
-          pendingFiles.push({ type: 'pdf', name: file.name, b64, mediaType: 'application/pdf' });
-        } else {
-          pendingFiles.push({ type: 'text', name: file.name, content: e.target.result });
-        }
-        addPreview(file.name, null, pendingFiles.length - 1, false);
+        const content = `[File: ${file.name}]\n\`\`\`${ext.slice(1)}\n${e.target.result.slice(0, 12000)}\n\`\`\``;
+        pendingFiles.push({ type: 'text', name: file.name, content });
+        addPreview(file.name, pendingFiles.length - 1);
       };
-      if (file.type === 'application/pdf') reader.readAsDataURL(file);
-      else reader.readAsText(file);
+      reader.readAsText(file);
     }
   }
   document.getElementById('fileInput').value = '';
 }
 
-function addPreview(name, src, idx, isImg) {
+function showImageWarning(filename) {
+  // Show a temporary rejected badge in preview strip
+  previewStrip.classList.add('active');
+  const item = document.createElement('div');
+  item.className = 'preview-item rejected';
+  item.innerHTML = `<span>🚫</span><span>${escHtml(filename)} — no vision</span>`;
+  previewStrip.appendChild(item);
+  setTimeout(() => {
+    item.remove();
+    if (!previewStrip.querySelector('.preview-item')) previewStrip.classList.remove('active');
+  }, 3000);
+
+  // Also show as a bot warning message in chat
+  appendWarn(`⚠ Vision module offline. Image files cannot be processed in this build. Attach text or code files instead.`);
+}
+
+function addPreview(name, idx) {
   previewStrip.classList.add('active');
   const item = document.createElement('div');
   item.className = 'preview-item';
   item.dataset.idx = idx;
-  if (isImg && src) {
-    const img = document.createElement('img');
-    img.src = src;
-    img.className = 'preview-thumb';
-    item.appendChild(img);
-  } else {
-    item.insertAdjacentHTML('beforeend', '<span style="color:var(--amber);margin-right:2px">📄</span>');
-  }
+  item.innerHTML = `<span style="color:var(--amber);margin-right:2px;flex-shrink:0">📄</span>`;
   const nameSpan = document.createElement('span');
   nameSpan.textContent = name;
   item.appendChild(nameSpan);
   const rm = document.createElement('span');
   rm.className = 'preview-remove';
   rm.textContent = '×';
-  rm.onclick = () => removePreview(item, idx);
+  rm.onclick = () => {
+    pendingFiles[idx] = null;
+    item.remove();
+    if (!previewStrip.querySelector('.preview-item')) previewStrip.classList.remove('active');
+  };
   item.appendChild(rm);
   previewStrip.appendChild(item);
 }
 
-function removePreview(el, idx) {
-  pendingFiles[idx] = null;
-  el.remove();
-  if (!previewStrip.querySelector('.preview-item')) previewStrip.classList.remove('active');
-}
-
-// ── RENDER HELPERS ──
+// ── RENDER HELPERS ────────────────────────────────────────────────────────────
 function scrollDown() {
   setTimeout(() => { chatArea.scrollTop = chatArea.scrollHeight; }, 60);
 }
 
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 function formatBubble(text) {
-  // Convert ```lang ... ``` to <pre><code>
-  text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
-    return `<pre><code>${escHtml(code.trim())}</code></pre>`;
-  });
-  // Bold
+  text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) =>
+    `<pre><code>${escHtml(code.trim())}</code></pre>`
+  );
   text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  // Italic
   text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  // Line breaks
   text = text.replace(/\n/g, '<br>');
   return text;
 }
 
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function appendMsg(role, htmlContent, attachedImgSrc) {
+function appendMsg(role, htmlContent) {
   const row = document.createElement('div');
   row.className = `msg-row ${role}`;
-
   const av = document.createElement('div');
   av.className = `msg-avatar ${role === 'bot' ? 'bot-av' : 'user-av'}`;
   av.innerHTML = role === 'bot' ? 'N·A<br>S·H<br>A' : '⬡';
-
   const bub = document.createElement('div');
   bub.className = `bubble ${role}`;
+  bub.innerHTML = htmlContent;
+  row.appendChild(av);
+  row.appendChild(bub);
+  chatArea.appendChild(row);
+  scrollDown();
+}
 
-  if (attachedImgSrc) {
-    const img = document.createElement('img');
-    img.src = attachedImgSrc;
-    img.className = 'attached';
-    bub.appendChild(img);
-  }
-
-  const txt = document.createElement('div');
-  txt.innerHTML = htmlContent;
-  bub.appendChild(txt);
-
+function appendWarn(text) {
+  const row = document.createElement('div');
+  row.className = 'msg-row bot';
+  const av = document.createElement('div');
+  av.className = 'msg-avatar bot-av';
+  av.innerHTML = 'N·A<br>S·H<br>A';
+  const bub = document.createElement('div');
+  bub.className = 'bubble warn';
+  bub.textContent = text;
   row.appendChild(av);
   row.appendChild(bub);
   chatArea.appendChild(row);
@@ -752,9 +787,9 @@ function hideTyping() {
   if (el) el.remove();
 }
 
-// ── SEND ──
+// ── SEND (Groq / OpenAI-compatible) ──────────────────────────────────────────
 async function sendMessage() {
-  const text = inputField.value.trim();
+  const text  = inputField.value.trim();
   const files = pendingFiles.filter(Boolean);
   if ((!text && files.length === 0) || isTyping) return;
 
@@ -763,53 +798,36 @@ async function sendMessage() {
   isTyping = true;
   sendBtn.style.opacity = '0.4';
 
-  // Build user content array for API
-  const userContent = [];
-  let firstImgSrc = null;
+  // Build the user message content string
+  let userContent = '';
+  for (const f of files) userContent += f.content + '\n\n';
+  if (text) userContent += text;
+  userContent = userContent.trim();
 
-  // Add files
-  for (const f of files) {
-    if (f.type === 'image') {
-      if (!firstImgSrc) firstImgSrc = `data:${f.mediaType};base64,${f.b64}`;
-      userContent.push({ type: 'image', source: { type: 'base64', media_type: f.mediaType, data: f.b64 } });
-    } else if (f.type === 'pdf') {
-      userContent.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: f.b64 } });
-    } else if (f.type === 'text') {
-      userContent.push({ type: 'text', text: `[File: ${f.name}]\n\`\`\`\n${f.content}\n\`\`\`` });
-    }
-  }
-
-  if (text) userContent.push({ type: 'text', text });
-
-  // Show in chat
-  const displayText = [
-    ...files.filter(f => f && f.type !== 'image').map(f => `<div class="file-badge">📄 ${escHtml(f.name)}</div>`),
-    text ? escHtml(text).replace(/\n/g,'<br>') : ''
-  ].join('');
-  appendMsg('user', displayText, firstImgSrc);
+  // Display in chat
+  const fileBadges = files.map(f => `<div class="file-badge">📄 ${escHtml(f.name)}</div>`).join('');
+  appendMsg('user', fileBadges + (text ? escHtml(text).replace(/\n/g,'<br>') : ''));
 
   // Clear pending
   pendingFiles = [];
   previewStrip.innerHTML = '';
   previewStrip.classList.remove('active');
 
-  // Push to history (simple text for history; files handled per-message)
+  // Add to history
   history.push({ role: 'user', content: userContent });
 
   showTyping();
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-        'anthropic-version': '2023-06-01'
+        'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4096,
-        system: SYSTEM_PROMPT,
+        model: MODEL,
+        max_tokens: 8192,
         messages: history
       })
     });
@@ -817,17 +835,17 @@ async function sendMessage() {
     const data = await res.json();
     hideTyping();
 
-    if (res.ok && data.content && data.content[0]) {
-      const reply = data.content[0].text;
+    if (res.ok && data.choices && data.choices[0]) {
+      const reply = data.choices[0].message.content;
       history.push({ role: 'assistant', content: reply });
       appendMsg('bot', formatBubble(reply));
     } else {
       const err = data.error ? data.error.message : 'Unknown error.';
-      appendMsg('bot', `⚠ <strong>ERROR:</strong> ${escHtml(err)}`);
+      appendWarn(`⚠ ERROR: ${err}`);
     }
   } catch (e) {
     hideTyping();
-    appendMsg('bot', '⚠ <strong>CONNECTION FAULT.</strong> Check network and retry.');
+    appendWarn('⚠ CONNECTION FAULT. Check network and retry.');
   }
 
   isTyping = false;
@@ -836,10 +854,13 @@ async function sendMessage() {
 
 function sendQuick(t) { inputField.value = t; sendMessage(); }
 
-inputField.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(); });
+inputField.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) sendMessage();
+});
 
-// Adjust layout when mobile keyboard opens
-window.addEventListener('resize', () => setTimeout(() => { chatArea.scrollTop = chatArea.scrollHeight; }, 100));
+window.addEventListener('resize', () => {
+  setTimeout(() => { chatArea.scrollTop = chatArea.scrollHeight; }, 100);
+});
 </script>
 </body>
 </html>
